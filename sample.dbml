@@ -44,7 +44,6 @@ Table products {
 Table categories {
   id integer [pk, increment]
   name varchar [not null]
-  parent_id integer [ref: > categories.id, null]
   slug varchar [not null, unique]
 }
 

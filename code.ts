@@ -329,45 +329,79 @@ function calculateMaxWidth(tableHeader: string, tableData: TableResponse): numbe
 }
 
 
-async function legend() {
+async function legend(x: number = 0, y: number = 0) {
   const rect = figma.createRectangle();
-  rect.resize(200, 100);
+  rect.resize(200, 70);
   rect.fills = [{ type: 'SOLID', color: { r: 0.9, g: 0.9, b: 0.9 } }];
   rect.name = "Node";
+  rect.x = x;
+  rect.y = y;
+  rect.cornerRadius = theme.borderRadius;
   figma.currentPage.appendChild(rect);
 
-  const text = figma.createText();
-  text.fontName = theme.fontNameRegular;
-  text.fontSize = theme.fontSize;
-  text.fills = [{ type: "SOLID", color: theme.colors.text }];
-  text.x = rect.x + 20;
-  text.y = rect.y + 35;
-  figma.currentPage.appendChild(text);
+  const title = figma.createText();
+  title.characters = "RELATIONSHIP LEGEND";
+  title.fontName = theme.fontNameBold;
+  title.fontSize = theme.fontSize;
+  title.fills = [{ type: "SOLID", color: theme.colors.text }];
+  title.x = rect.x + 20;
+  title.y = rect.y - 20;
+  figma.currentPage.appendChild(title);
 
-  // Create two connectors
-const connector1 = figma.createConnector();
-connector1.connectorStart = {
-  endpointNodeId: rect.id,
-  magnet: 'AUTO',
-};
-connector1.connectorEnd = {
-  position: { x: rect.x - 100, y: rect.y + 50 },
-};
-figma.currentPage.appendChild(connector1);
-
-const connector2 = figma.createConnector();
-connector2.connectorStart = {
-  endpointNodeId: rect.id,
-  magnet: 'AUTO',
-};
-connector2.connectorEnd = {
-  position: { x: rect.x + 300, y: rect.y + 50 },
-};
-figma.currentPage.appendChild(connector2);
-
-const group = figma.group([rect, text], figma.currentPage);
-group.name = "Node Group";
-}
+   // Create ONE (1) text
+   const oneText = figma.createText();
+   oneText.characters = "ONE (1)";
+   oneText.fontName = theme.fontNameRegular;
+   oneText.fontSize = theme.fontSize;
+   oneText.fills = [{ type: "SOLID", color: theme.colors.text }];
+   oneText.x = rect.x + 20;
+   oneText.y = title.y + 30;
+   figma.currentPage.appendChild(oneText);
+ 
+   // Create MANY (m) text
+   const manyText = figma.createText();
+   manyText.characters = "MANY (m)";
+   manyText.fontName = theme.fontNameRegular;
+   manyText.fontSize = theme.fontSize;
+   manyText.fills = [{ type: "SOLID", color: theme.colors.text }];
+   manyText.x = rect.x + 20;
+   manyText.y = oneText.y + 30;
+   figma.currentPage.appendChild(manyText);
+ 
+   // Create arrow for ONE (1)
+   const oneConnector = figma.createConnector();
+   oneConnector.connectorStart = {
+     endpointNodeId: oneText.id,
+     magnet: "CENTER",
+   };
+   oneConnector.connectorEnd = {
+     position: { x: oneText.x + 100, y: oneText.y + oneText.height / 2 },
+   };
+   oneConnector.strokeWeight = 2;
+   oneConnector.strokes = [{ type: "SOLID", color: theme.colors.text }];
+   oneConnector.connectorStartStrokeCap = "NONE"; 
+   oneConnector.connectorEndStrokeCap = "CIRCLE_FILLED";
+   oneConnector.connectorLineType = "STRAIGHT";
+   figma.currentPage.appendChild(oneConnector);
+ 
+   // Create arrow for MANY (m)
+   const manyConnector = figma.createConnector();
+   manyConnector.connectorStart = {
+     endpointNodeId: manyText.id,
+     magnet: "CENTER",
+   };
+   manyConnector.connectorEnd = {
+     position: { x: manyText.x + 100, y: manyText.y + manyText.height / 2 },
+   };
+   manyConnector.strokeWeight = 2;
+   manyConnector.strokes = [{ type: "SOLID", color: theme.colors.text }];
+   manyConnector.connectorStartStrokeCap = "NONE"; 
+   manyConnector.connectorEndStrokeCap = "ARROW_LINES";
+   manyConnector.connectorLineType = "STRAIGHT"; 
+   figma.currentPage.appendChild(manyConnector);
+ 
+   figma.group([rect, title, oneText, manyText, oneConnector, manyConnector], figma.currentPage);
+  }
 
 
 async function main() {
@@ -483,7 +517,7 @@ async function main() {
             section.appendChild(node); // group them inside the section
           }
 
-          await legend();
+          await legend(section.x - 300, section.y);
 
           figma.viewport.scrollAndZoomIntoView([section]);
 
