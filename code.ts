@@ -350,7 +350,7 @@ async function legend(x: number = 0, y: number = 0) {
 
    // Create ONE (1) text
    const oneText = figma.createText();
-   oneText.characters = "ONE (1)";
+   oneText.characters = "ONE  (1)";
    oneText.fontName = theme.fontNameRegular;
    oneText.fontSize = theme.fontSize;
    oneText.fills = [{ type: "SOLID", color: theme.colors.text }];
@@ -372,7 +372,7 @@ async function legend(x: number = 0, y: number = 0) {
    const oneConnector = figma.createConnector();
    oneConnector.connectorStart = {
      endpointNodeId: oneText.id,
-     magnet: "CENTER",
+     magnet: "RIGHT",
    };
    oneConnector.connectorEnd = {
      position: { x: oneText.x + 100, y: oneText.y + oneText.height / 2 },
@@ -388,7 +388,7 @@ async function legend(x: number = 0, y: number = 0) {
    const manyConnector = figma.createConnector();
    manyConnector.connectorStart = {
      endpointNodeId: manyText.id,
-     magnet: "CENTER",
+     magnet: "RIGHT",
    };
    manyConnector.connectorEnd = {
      position: { x: manyText.x + 100, y: manyText.y + manyText.height / 2 },
