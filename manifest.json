@@ -1,0 +1,22 @@
+{
+  "name": "Entity Relationship Diagram",
+  "id": "1495824087433821208",
+  "api": "1.0.0",
+  "main": "code.js",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "documentAccess": "dynamic-page",
+  "editorType": [
+    "figjam"
+  ],
+  "ui": {
+    "main": "ui.html",
+    "secondary": "iframe.html"
+  },
+  "networkAccess": {
+    "allowedDomains": [
+      "https://fonts.googleapis.com",
+      "https://fonts.gstatic.com"
+    ]
+  }
+}

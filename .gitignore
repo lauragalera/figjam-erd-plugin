@@ -1,0 +1,18 @@
+# Node
+*.log
+*.log.*
+node_modules
+
+out/
+dist/
+code.js
+
+# Ignore all .js files
+*.js
+
+# Except for specific files
+!utils.js
+!rollup.config.js
+
+# Ignore iframe.html
+iframe.html

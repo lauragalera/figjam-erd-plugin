@@ -1,0 +1,151 @@
+// E-commerce Database Schema
+Project ecommerce {
+  database_type: 'PostgreSQL'
+  Note: 'Sample 15-table schema for testing Figma plugin table positioning'
+}
+
+// Users and Authentication
+Table users {
+  id integer [pk, increment]
+  username varchar [not null, unique]
+  email varchar [not null, unique]
+  password_hash varchar [not null]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+}
+
+Table roles {
+  id integer [pk]
+  name varchar [not null, unique]
+  description text
+}
+
+Table user_roles {
+  user_id integer [ref: > users.id]
+  role_id integer [ref: > roles.id]
+  assigned_at timestamp [default: `now()`]
+  Indexes {
+    (user_id, role_id) [pk]
+  }
+}
+
+// Products
+Table products {
+  id integer [pk, increment]
+  name varchar [not null]
+  description text
+  price decimal(10,2) [not null]
+  sku varchar [unique]
+  stock_quantity integer [default: 0]
+  category_id integer [ref: > categories.id]
+  created_at timestamp [default: `now()`]
+}
+
+Table categories {
+  id integer [pk, increment]
+  name varchar [not null]
+  parent_id integer [ref: > categories.id, null]
+  slug varchar [not null, unique]
+}
+
+Table product_images {
+  id integer [pk, increment]
+  product_id integer [ref: > products.id, not null]
+  url varchar [not null]
+  alt_text varchar
+  is_primary boolean [default: false]
+  display_order integer [default: 0]
+}
+
+// Orders
+Table orders {
+  id integer [pk, increment]
+  user_id integer [ref: > users.id, null]
+  order_date timestamp [default: `now()`]
+  status varchar [default: 'pending']
+  total_amount decimal(10,2) [not null]
+  shipping_address_id integer [ref: > addresses.id]
+  billing_address_id integer [ref: > addresses.id]
+}
+
+Table order_items {
+  id integer [pk, increment]
+  order_id integer [ref: > orders.id, not null]
+  product_id integer [ref: > products.id, not null]
+  quantity integer [not null]
+  unit_price decimal(10,2) [not null]
+  discount decimal(10,2) [default: 0.00]
+}
+
+// Payments
+Table payments {
+  id integer [pk, increment]
+  order_id integer [ref: > orders.id, not null]
+  amount decimal(10,2) [not null]
+  payment_method varchar [not null]
+  transaction_id varchar [unique]
+  status varchar [default: 'pending']
+  created_at timestamp [default: `now()`]
+}
+
+// Shipping
+Table shipping_methods {
+  id integer [pk, increment]
+  name varchar [not null]
+  description text
+  cost decimal(10,2) [not null]
+  estimated_days integer
+}
+
+Table shipments {
+  id integer [pk, increment]
+  order_id integer [ref: > orders.id, not null]
+  shipping_method_id integer [ref: > shipping_methods.id, not null]
+  tracking_number varchar
+  shipped_at timestamp
+  delivered_at timestamp
+}
+
+// Addresses
+Table addresses {
+  id integer [pk, increment]
+  user_id integer [ref: > users.id, null]
+  street_address varchar [not null]
+  city varchar [not null]
+  state varchar [not null]
+  postal_code varchar [not null]
+  country varchar [not null, default: 'US']
+  is_default boolean [default: false]
+}
+
+// Reviews
+Table reviews {
+  id integer [pk, increment]
+  product_id integer [ref: > products.id, not null]
+  user_id integer [ref: > users.id, not null]
+  rating integer [not null, note: '1-5 scale']
+  title varchar
+  comment text
+  created_at timestamp [default: `now()`]
+}
+
+// Discounts and Promotions
+Table discounts {
+  id integer [pk, increment]
+  code varchar [not null, unique]
+  description text
+  discount_type varchar [not null, note: 'percentage or fixed']
+  discount_value decimal(10,2) [not null]
+  start_date timestamp [not null]
+  end_date timestamp [not null]
+  max_uses integer
+  current_uses integer [default: 0]
+}
+
+Table product_discounts {
+  product_id integer [ref: > products.id, not null]
+  discount_id integer [ref: > discounts.id, not null]
+  Indexes {
+    (product_id, discount_id) [pk]
+  }
+}
