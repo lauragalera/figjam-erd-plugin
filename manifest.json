@@ -2,7 +2,7 @@
   "name": "Entity Relationship Diagram",
   "id": "1495824087433821208",
   "api": "1.0.0",
-  "main": "code.js",
+  "main": "dist/code.js",
   "capabilities": [],
   "enableProposedApi": false,
   "documentAccess": "dynamic-page",

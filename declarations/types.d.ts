@@ -1,4 +1,5 @@
-type SiblingTable = {
+declare global {
+  type SiblingTable = {
     schemaName: string;
     name: string;
     fields: {
@@ -7,25 +8,25 @@ type SiblingTable = {
       type: string;
     }[];
   };
-  
+
   interface RefEndpoint {
     schema: string;
     table: string;
     fieldNames: string[];
     relation: string;
   }
-  
+
   type EnumValueResponse = {
     id: string;
     name: string;
     note: string;
   };
-  
+
   type EnumResponse = {
     name: string;
     values: EnumValueResponse[];
   };
-  
+
   type RefResponse = {
     id: string;
     name: string;
@@ -33,7 +34,7 @@ type SiblingTable = {
     to: RefEndpoint;
     refDef: string;
   };
-  
+
   type FieldResponse = {
     name: string;
     type: string;
@@ -47,7 +48,7 @@ type SiblingTable = {
       type: string;
     };
   };
-  
+
   type TableResponse = {
     name: string;
     alias?: string;
@@ -55,7 +56,7 @@ type SiblingTable = {
     refs?: RefResponse[];
     fields?: FieldResponse[];
   };
-  
+
   type SchemaResponse = {
     name: string;
     note?: string;
@@ -64,14 +65,14 @@ type SiblingTable = {
     enums?: EnumResponse[];
     refs?: RefResponse[];
   };
-  
+
   interface DBMLResponse {
     name?: string;
     note?: string;
     databaseType?: string;
     schemas: SchemaResponse;
   }
-  
+
   interface Token {
     i: number;
     x: number;
@@ -79,14 +80,14 @@ type SiblingTable = {
     text: string;
     style: Style;
   }
-  
+
   interface Style {
     color: string;
     weight: string;
   }
-  
+
   interface Message {
-    type: "text";
+    type: 'response-editor' | 'error' | 'status';
     width?: number;
     height?: number;
     text: string;
@@ -96,5 +97,8 @@ type SiblingTable = {
     tokens?: Token[];
     language: string;
     parser: string;
-    buttonAction?: "update" | "batch_create" | "ref-create";
-  }  
+    buttonAction?: 'update' | 'batch_create' | 'ref-create';
+  }
+}
+
+export {};

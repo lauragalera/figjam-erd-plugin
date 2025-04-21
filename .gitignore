@@ -9,10 +9,12 @@ code.js
 
 # Ignore all .js files
 *.js
+*.mjs
 
 # Except for specific files
 !utils.js
 !rollup.config.js
 
-# Ignore iframe.html
+# Other files
 iframe.html
+.prettierrc

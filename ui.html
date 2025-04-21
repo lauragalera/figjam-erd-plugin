@@ -11,7 +11,7 @@
       text-align: center; /* Center content */
     }
 
-    input, #create, #edit-dbml, #edit-sql-ddl {
+    #enter-table {
       border-radius: 5px;
       padding: 10px 20px;
       margin: 5px;
@@ -22,15 +22,8 @@
       cursor: pointer;
     }
 
-    #create:hover,
-    #edit-dbml:hover,
-    #edit-sql-ddl:hover {
+    #enter-table:hover {
       background-color: #333; /* Slightly lighter black */
-    }
-
-    label {
-      font-size: 0.8em;
-      color: #666;
     }
   </style>
 </head>
@@ -38,12 +31,11 @@
 
   <h2>Entity Relationship Diagram</h2>
   
-  <button id="edit-dbml">Enter Tables</button>
+  <button id="enter-table">Enter Tables</button>
 
   <script>
-
-    document.getElementById('edit-dbml').onclick = function () {
-      parent.postMessage({ pluginMessage: { type: 'edit-dbml' } }, '*');
+    document.getElementById('enter-table').onclick = function () {
+      parent.postMessage({ pluginMessage: { type: 'enter-table' } }, '*');
     };
   </script>
 

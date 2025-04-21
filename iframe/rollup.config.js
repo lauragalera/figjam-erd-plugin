@@ -14,7 +14,9 @@ export default {
   },
   // Generate HTML from the compiled output bundle and output the UI
   plugins: [
-    typescript(),
+    typescript({
+      include: ["./src/**/*.ts", "../declarations/**/*.d.ts"], // Explicitly include declarations
+    }),
     resolve(),
     terser(),
     commonjs({

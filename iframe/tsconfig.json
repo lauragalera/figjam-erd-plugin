@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "lib": ["es6", "dom"],
+    "target": "es2017",
+    "lib": ["es2017", "dom"],
     "moduleResolution": "node",
-    "jsx": "react"
+    "typeRoots": ["./node_modules/@types", "../declarations"]
   },
-  "exclude": ["../widget/src/code.tsx"]
+  "include": ["./src/**/*.ts", "../declarations/**/*.d.ts"]
 }

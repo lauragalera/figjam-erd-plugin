@@ -4,7 +4,9 @@
   "description": "Your Figma Plugin",
   "main": "code.js",
   "scripts": {
-    "build": "tsc -p tsconfig.json && npm run build:iframe",
+    "prettier-format": "prettier --config .prettierrc \"**/*.ts\" --write",
+    "build": "npm run build:main && npm run build:iframe",
+    "build:main": "webpack",
     "build:iframe": "cd iframe && npm run build",
     "watch": "npm run build -- --watch",
     "watch:iframe": "cd iframe && npm run watch",
@@ -14,12 +16,21 @@
   "author": "",
   "license": "",
   "devDependencies": {
+    "@eslint/js": "^9.25.0",
     "@figma/eslint-plugin-figma-plugins": "*",
     "@figma/plugin-typings": "*",
-    "@typescript-eslint/eslint-plugin": "^6.12.0",
-    "@typescript-eslint/parser": "^6.12.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "concurrently": "^9.1.2",
+    "esbuild": "^0.25.2",
     "eslint": "^8.57.1",
-    "typescript": "^5.3.2"
+    "globals": "^16.0.0",
+    "prettier": "^3.5.3",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.30.1",
+    "webpack": "^5.99.6",
+    "webpack-cli": "^6.0.1"
   },
   "eslintConfig": {
     "extends": [
