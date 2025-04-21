@@ -12,8 +12,9 @@ code.js
 *.mjs
 
 # Except for specific files
-!utils.js
+!parser.js
 !rollup.config.js
+!webpack.config.js
 
 # Other files
 iframe.html

@@ -41,11 +41,10 @@ export function processReferences(
       const toRelation = ref.to.relation;
   
       const fromTableName = `${ref.from.schema}.${ref.from.table}`;
-      const toTableName = `${ref.to.schema}.${ref.to.table}`;
   
       const fromNode = rowNodeMap.get(fromKey);
       const toNode = rowNodeMap.get(toKey);
-      const tableName = msg.parser === 'dbml' ? fromTableName : toTableName;
+      const tableName = fromTableName;
       const tableColor = tableColorMap.get(tableName) || { r: 0.1, g: 0.1, b: 0.1 };
   
       if (fromNode && toNode) {

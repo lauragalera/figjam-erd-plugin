@@ -4,7 +4,7 @@ import { basicSetup } from 'codemirror';
 import { indentWithTab } from '@codemirror/commands';
 import { Parser } from '@dbml/core';
 
-import Helper from '../utils';
+import Helper from '../parser';
 
 import { LanguageSupport } from '@codemirror/language';
 import { javascript } from '@codemirror/lang-javascript';

@@ -47,8 +47,6 @@ export function createSectionWithNodes(
 
   const allNodes = [...allTables, ...allConnectors];
 
-  console.log('All nodes:', allNodes);
-
   for (const node of allNodes) {
     const { x, y, width, height } = node;
     minX = Math.min(minX, x);
