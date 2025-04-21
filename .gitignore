@@ -18,3 +18,4 @@ code.js
 # Other files
 iframe.html
 .prettierrc
+.eslintrc.json
