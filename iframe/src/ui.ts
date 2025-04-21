@@ -23,6 +23,10 @@ const LANGUAGES = [
   },
 ];
 
+const availableParsers = ["mysql", "postgres", "dbml"];
+
+let parser: "mysql" | "postgres" | "dbml" = "dbml";
+
 // Initialize the language
 const languageObject = LANGUAGES.filter((x) => x.name === INITIAL_LANGUAGE)[0];
 const language = languageObject.package();
@@ -30,7 +34,7 @@ const languageName = languageObject.name;
 
 createInfoText();
 
-createStatusText();
+createInputFromat();
 
 // create div with class name editor container and append it after p
 const editorContainer = document.createElement("div");
@@ -86,7 +90,7 @@ function getExtensions(language: LanguageSupport, languageName: string) {
         let dbmlError: string | null = null;
 
         try {
-          const parseDbml = Parser.parse(docContents, "dbml");
+          const parseDbml = Parser.parse(docContents, parser);
 
           console.log("Parsed DBML library:", parseDbml);
 
@@ -103,10 +107,11 @@ function getExtensions(language: LanguageSupport, languageName: string) {
 
           renderExistTableList(existTableContainer);
 
-          dbmlJSON = Helper.convertToJson(parseDbml);
+          dbmlJSON = Helper.convertToJson(parseDbml, parser);
           console.log("Parsed DBML JSON:", dbmlJSON);
         } catch (err) {
           dbmlError = err.message;
+          displayStatusError(existTableContainer, dbmlError)
           console.error("Error parsing DBML:", dbmlError);
         }
 
@@ -118,6 +123,7 @@ function getExtensions(language: LanguageSupport, languageName: string) {
           dbmlError: dbmlError,
           language: languageName,
           buttonAction: "update",
+          parser: parser,
         };
 
         returnMessage(parent, message);
@@ -143,9 +149,9 @@ const returnMessage = (parent, message) => {
     }
 
     if (isEscape) {
-      const status = document.getElementById("status-message");
-      if (status) {
-        status.textContent = "Creating tables...";
+      const inputWrapper = document.getElementById("input-wrapper");
+      if (inputWrapper) {
+        inputWrapper.innerHTML = `<span style="font-family: monospace; font-size: 16px; color: gray;">Creating tables...</span>`;
       }
       console.log("Escape key pressed!");
       parent.postMessage(
@@ -161,7 +167,7 @@ const returnMessage = (parent, message) => {
 // Create the CodeMirror editor
 const editor = new EditorView({
   state: EditorState.create({
-    doc: "Enter schemas DBML format...", // INITIAL_DOC replaced by the widget to inject state
+    doc: `${availableParsers.join(" | ")} format`, // INITIAL_DOC replaced by the widget to inject state
     extensions: getExtensions(language, languageName),
   }),
   parent: tableContainer,
@@ -208,20 +214,22 @@ function createInfoText() {
   document.body.appendChild(infoText);
 }
 
-function createStatusText() {
-  const status = document.createElement("div");
-  status.id = "status-message";
-  status.style.minHeight = "26px"; // Reserve space even when empty
-  status.style.padding = "10px 20px";
-  status.style.fontSize = "14px";
-  status.style.fontWeight = "bold";
-  status.style.color = "gray";
-  status.style.fontFamily = "Inter, sans-serif";
-  status.innerText = ""; // Start empty, but it still holds the space
-  document.body.appendChild(status);
+function displayStatusError(container: HTMLElement, dbmlError: string) {
+
+  container.innerHTML = "";
+  const errorDiv = document.createElement("div");
+  errorDiv.textContent = `Error parsing: ${dbmlError}`;
+  errorDiv.style.color = "red";
+  errorDiv.style.padding = "8px";
+  errorDiv.style.borderRadius = "4px";
+  errorDiv.style.marginBottom = "10px";
+  errorDiv.style.fontFamily = "monospace";
+
+  container.appendChild(errorDiv);
 }
 
 function renderExistTableList(container: HTMLElement) {
+
   // Clear previous contents
   container.innerHTML = "";
 
@@ -257,4 +265,54 @@ function renderExistTableList(container: HTMLElement) {
   }
 
   container.appendChild(availableTable);
+}
+
+function createInputFromat(){
+const inputWrapper = document.createElement("div");
+inputWrapper.id = "input-wrapper";
+inputWrapper.style.display = "flex";
+inputWrapper.style.gap = "8px";
+inputWrapper.style.margin = "10px 20px";
+
+const input = document.createElement("input");
+input.type = "text";
+input.placeholder = "Enter format (g.e. dbml)";
+input.style.flex = "1";
+input.style.padding = "6px 8px";
+input.style.fontSize = "14px";
+input.style.fontFamily = "monospace";
+
+const button = document.createElement("button");
+button.textContent = "Enter";
+button.style.padding = "6px 12px";
+button.style.fontSize = "14px";
+button.style.cursor = "pointer";
+
+button.onclick = () => {
+  const value = input.value.trim();
+  if (value) {
+    console.log("User input:", value);
+    if (!availableParsers.includes(value as any)) {
+      displayStatusError(existTableContainer, `Invalid format: ${value}`);
+      return;
+    }
+    parser = value as "mysql" | "postgres" | "dbml";
+    clearStatusText(existTableContainer);
+    existTableContainer.innerHTML = `<div style="font-family: monospace; color: green;">${parser} selected successfully!</div>`;
+
+    setTimeout(() => {
+      clearStatusText(existTableContainer);
+    }, 1000);
+
+    console.log("Selected parser:", parser);
+  }
+};
+
+inputWrapper.appendChild(input);
+inputWrapper.appendChild(button);
+document.body.appendChild(inputWrapper);
+}
+
+function clearStatusText(container: HTMLElement) {
+  container.innerHTML = "";
 }

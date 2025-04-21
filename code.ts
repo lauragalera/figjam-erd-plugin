@@ -140,11 +140,7 @@ async function createRow(schemaName: string, tableName: string, column: FieldRes
   }];
   row.name = `${schemaName}.${tableName}.${column.name}`;
 
-  console.log("Row name:", row.name);
-
   rowNodeMap.set(row.name, row);
-
-  console.log(rowNodeMap);
 
   if (column.pk) {
     const keyIcon = await createTextNode("🔑");
@@ -169,6 +165,19 @@ async function createRow(schemaName: string, tableName: string, column: FieldRes
 
   row.appendChild(nameText);
   row.appendChild(typeContainer);
+
+  if (column.not_null) {
+    const nullText = await createTextNode('not_null', false, theme.fontMonoSize);
+    nullText.opacity = 0.6;
+
+    const nullContainer = figma.createFrame();
+    nullContainer.layoutMode = "HORIZONTAL";
+    nullContainer.counterAxisSizingMode = "AUTO";
+    nullContainer.primaryAxisSizingMode = "AUTO";
+    nullContainer.fills = [];
+    nullContainer.appendChild(nullText);
+    row.appendChild(nullContainer);
+  }
 
   return row;
 }
@@ -310,20 +319,24 @@ async function placeWithoutOverlap(tables: FrameNode[]) {
   }
 }
 
-function estimateTextWidth(text: string, charWidth = 10, padding = 40): number {
-  return text.length * charWidth + padding;
+function estimateTextWidth(text: string, offsetNull: boolean, charWidth = 10, padding = 40): number {
+  return text.length * charWidth + padding + (offsetNull ? 50 : 0);
 }
+
 
 function calculateMaxWidth(tableHeader: string, tableData: TableResponse): number {
   let maxWidth = 0;
 
-  const tableNameWidth = estimateTextWidth(tableHeader, 10, 40);
+  const tableNameWidth = estimateTextWidth(tableHeader, false);
   maxWidth = Math.max(maxWidth, tableNameWidth);
 
+  console.log("Table name:", tableHeader);
   for (const field of tableData.fields ?? []) {
-    const fieldWidth = estimateTextWidth(`${field.name} ${field.type}`, 10, 40);
+    const fieldWidth = estimateTextWidth(`${field.name} ${field.type}`, field.not_null ?? false);
     maxWidth = Math.max(maxWidth, fieldWidth);
   }
+
+  console.log("Max width for table:", maxWidth);
 
   return maxWidth;
 }
@@ -445,13 +458,16 @@ async function main() {
 
               console.log("From relation:", fromRelation);
               console.log("To relation:", toRelation);
-              console.log("From key:", fromKey);  
+              console.log("From key:", fromKey);
               console.log("To key:", toKey);
+
               const fromTableName = `${ref.from.schema}.${ref.from.table}`;
+              const toTableName = `${ref.to.schema}.${ref.to.table}`;
 
               const fromNode = rowNodeMap.get(fromKey);
               const toNode = rowNodeMap.get(toKey);
-              const tableColor = tableColorMap.get(fromTableName) || { r: 0.1, g: 0.1, b: 0.1 };
+              const tableName = msg.parser === 'dbml' ? fromTableName : toTableName;
+              const tableColor = tableColorMap.get(tableName) || { r: 0.1, g: 0.1, b: 0.1 };
 
               if (fromNode && toNode) {
                 const connector = figma.createConnector();

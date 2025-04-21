@@ -1,16 +1,16 @@
-const convertToJson = (dbml) => {
-    // handling foreign keys
-    const fkFields = new Set();
+const convertToJson = (dbml, parser) => {
+  const fkFields = new Set();
 
-    for (const schema of dbml.schemas) {
+  for (const schema of dbml.schemas) {
       for (const ref of schema.refs || []) {
-        const to = ref.endpoints[1];
-        const schemaName = to.schemaName || 'public';
-        for (const fieldName of to.fieldNames) {
-          fkFields.add(`${schemaName}.${to.tableName}.${fieldName}`);
-        }
+          const to = parser === "dbml" ? ref.endpoints[1] : ref.endpoints[0];
+
+          const schemaName = to.schemaName || 'public';
+          for (const fieldName of to.fieldNames) {
+              fkFields.add(`${schemaName}.${to.tableName}.${fieldName}`);
+          }
       }
-    }
+  }
 
     const convertedSchemas = dbml.schemas.map((schema) => {
       const { name: schemaName, note: schemaNote } = schema;

@@ -95,5 +95,6 @@ type SiblingTable = {
     dbmlError: string | null;
     tokens?: Token[];
     language: string;
+    parser: string;
     buttonAction?: "update" | "batch_create" | "ref-create";
   }  
