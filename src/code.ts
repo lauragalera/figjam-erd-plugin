@@ -22,7 +22,7 @@ async function main() {
           await loadFonts();
 
           const data: DBMLResponse = JSON.parse(msg.dbml);
-          const allTables: FrameNode[] = [];
+          const allTables: GroupNode[] = [];
           const allConnectors: ConnectorNode[] = [];
 
           // Iterate through schemas, and process tables, references

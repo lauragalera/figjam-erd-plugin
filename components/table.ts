@@ -2,6 +2,67 @@ import { theme } from './themes';
 import { createTextNode, calculateMaxWidth } from './utils';
 import { defaultHeaderColors } from './themes';
 
+async function createRowFigjam(
+  rowNodeMap: Map<string, SceneNode>,
+  schemaName: string,
+  tableName: string,
+  column: FieldResponse,
+  totalWidth: number,
+): Promise<GroupNode> {
+  const rowName = `${schemaName}.${tableName}.${column.name}`;
+
+  // RECTANGLE
+  const fillColor = column.pk ? theme.colors.pk : column.fk ? theme.colors.fk : theme.colors.default;
+  const rectangle = figma.createShapeWithText();
+  rectangle.shapeType = 'SQUARE';
+  rectangle.text.characters = "";
+  rectangle.fills = [{ type: "SOLID", color: fillColor }];
+  rectangle.resize(totalWidth, 30);
+  rectangle.strokeWeight = 2;
+  rectangle.strokes = [{ type: "SOLID", color: theme.colors.stroke }];
+
+  const children: SceneNode[] = [rectangle];
+
+  let startX = 12;
+  // ICONS
+  const iconString = `${column.pk ? '🔑' : ''}${column.fk ? '🔗' : ''}`;
+  if (iconString) {
+    const iconsText = await createTextNode(iconString);
+    iconsText.x = startX;
+    iconsText.y = 6;
+    children.push(iconsText);
+    startX += iconsText.width + 12; // Add some spacing after the icons
+  }
+
+  // COLUMN NAME & TYPE
+  const nameText = await createTextNode(column.name, column.pk, theme.fontMonoSize);
+  nameText.x = startX;
+  nameText.y = 6;
+  children.push(nameText);
+
+  console.log(nameText.x, nameText.y, nameText.width, nameText.height);
+
+  const typeText = await createTextNode(column.type, false, theme.fontMonoSize);;
+  typeText.opacity = 0.6;
+  typeText.x = nameText.x + nameText.width + 12;
+  typeText.y = 6;
+  children.push(typeText);
+
+  // NOT NULL (optional)
+  if (column.not_null) {
+    const nullText = await createTextNode('not_null', false, theme.fontMonoSize);
+    nullText.opacity = 0.6;
+    nullText.x = typeText.x + typeText.width + 12;
+    nullText.y = 6;
+    children.push(nullText);
+  }
+
+  const group = figma.group(children, figma.currentPage);
+  rowNodeMap.set(rowName, group);
+
+  return group;
+
+}
 
 async function createRow(
     rowNodeMap: Map<string, SceneNode>,
@@ -71,6 +132,83 @@ async function createRow(
   
     return row;
   }
+
+async function createHeaderFigjam(
+    headerTitle: string,
+    totalWidth: number,
+    colorHeader: RGB,
+): Promise<GroupNode> {
+
+    // HEADER FRAME
+
+    // RECTANGLE
+    const header = figma.createShapeWithText();
+    header.shapeType = 'SQUARE';
+    header.text.characters = "";
+    header.fills = [{ type: "SOLID", color: colorHeader }];
+    header.resize(totalWidth, 50);
+    header.strokeWeight = 2;
+    header.strokes = [{ type: "SOLID", color: theme.colors.stroke }];
+
+
+    // TITLE TEXT NODE
+    header.text.characters = headerTitle;
+    header.text.fontName = theme.fontNameBold;
+    header.text.fontSize = theme.fontSize;
+
+    header.text.lineHeight = { value: 28, unit: 'PIXELS' };
+
+    const children: SceneNode[] = [header];
+
+    const group = figma.group(children, figma.currentPage);
+    return group;
+}
+
+async function createBeautifulTableFigjam(
+  schemaData: SchemaResponse,
+  tableData: TableResponse,
+  colorHeader: RGB,
+  tableColorMap: Map<string, RGB>,
+  rowNodeMap: Map<string, SceneNode>,
+): Promise<GroupNode> {
+  
+  const headerTable = `${schemaData.name}.${tableData.name}`;
+  const headerDescription = tableData.note ?? '';
+  tableColorMap.set(headerTable, colorHeader);
+
+  const maxWidth = calculateMaxWidth(headerTable, tableData);
+
+  // Starting position
+  let currentY = 0;
+  const allNodes: SceneNode[] = [];
+
+  // HEADER
+  const header = await createHeaderFigjam(headerTable, maxWidth, colorHeader);
+  header.x = 0;
+  header.y = currentY;
+  currentY += header.height;
+  allNodes.push(header);
+
+  // ROWS
+  for (const column of tableData.fields ?? []) {
+    const row = await createRowFigjam(rowNodeMap, schemaData.name, tableData.name, column, maxWidth);
+    row.x = 0;
+    row.y = currentY;
+    currentY += row.height;
+    allNodes.push(row);
+  }
+
+  // GROUP all nodes together
+  const group = figma.group(allNodes, figma.currentPage);
+  group.name = headerTable;
+
+  // Move group off-screen initially
+  group.x = -9999;
+  group.y = -9999;
+
+  await new Promise(resolve => setTimeout(resolve, 0));
+  return group;
+}
   
 async function createHeader(
     headerTitle: string,
@@ -157,7 +295,7 @@ async function createHeader(
     container.appendChild(header);
   
     for (const column of tableData.fields ?? []) {
-      const row = await createRow(rowNodeMap, schemaData.name, tableData.name, column, maxWidth);
+      const row = await createRowFigjam(rowNodeMap, schemaData.name, tableData.name, column, maxWidth);
       container.appendChild(row);
     }
   
@@ -173,7 +311,7 @@ export async function processTables(
     schema: SchemaResponse,
     rowNodeMap: Map<string, SceneNode>,
     tableColorMap: Map<string, RGB>,
-    allTables: FrameNode[],
+    allTables: GroupNode[],
   ) {
 
     let color = Math.floor(Math.random() * Object.keys(defaultHeaderColors).length); // Initialize color index randomly
@@ -183,11 +321,9 @@ export async function processTables(
           defaultHeaderColors[
             Object.keys(defaultHeaderColors)[color] as keyof typeof defaultHeaderColors
           ];
-        const tableFrame = await createBeautifulTable(schema, table, colorHeader, tableColorMap, rowNodeMap);
+        const tableFrame = await createBeautifulTableFigjam(schema, table, colorHeader, tableColorMap, rowNodeMap);
         allTables.push(tableFrame);
         color += 1;
-        if (color >= Object.keys(defaultHeaderColors).length) {
-          color = 0;
-        }
+        color = (color + 1) % Object.keys(defaultHeaderColors).length;
       }
     }

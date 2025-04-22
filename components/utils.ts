@@ -33,7 +33,7 @@ export async function loadFonts() {
 }
 
 export function createSectionWithNodes(
-  allTables: FrameNode[],
+  allTables: GroupNode[],
   allConnectors: ConnectorNode[],
   sectionName: string,
 ): SectionNode {
@@ -104,7 +104,7 @@ function doesOverlap(a: Rect, b: Rect) {
   );
 }
 
-export async function placeWithoutOverlap(tables: FrameNode[]) {
+export async function placeWithoutOverlap(tables: GroupNode[]) {
   const spacing = theme.spacingX;
   const step = spacing;
   let x = 0;

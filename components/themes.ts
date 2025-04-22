@@ -15,6 +15,7 @@ export const theme = {
       pk: { r: 1, g: 1, b: 0.8 },
       fk: { r: 0.85, g: 0.85, b: 1 },
       default: { r: 0.97, g: 0.97, b: 0.97 },
+      stroke: { r: 0, g: 0, b: 0 } 
     },
   };
 
