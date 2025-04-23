@@ -20,9 +20,6 @@ export function calculateMaxWidth(tableHeader: string, tableData: TableResponse)
     const fieldWidth = estimateTextWidth(`${field.name} ${field.type}`, field.not_null ?? false);
     maxWidth = Math.max(maxWidth, fieldWidth);
   }
-
-  console.log('Max width for table:', maxWidth);
-
   return maxWidth;
 }
 
@@ -37,7 +34,6 @@ export function createSectionWithNodes(
   allConnectors: ConnectorNode[],
   sectionName: string,
 ): SectionNode {
-
   const MARGIN = 100;
 
   let minX = Infinity,
