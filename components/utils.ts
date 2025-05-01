@@ -2,22 +2,27 @@ import { theme } from './themes';
 
 function estimateTextWidth(
   text: string,
-  offsetNull: boolean,
+  field: { not_null?: boolean; pk?: boolean; fk?: boolean } = {},
   charWidth = 10,
-  padding = 40,
+  basePadding = 40,
 ): number {
-  return text.length * charWidth + padding + (offsetNull ? 50 : 0);
+  const hasTwoIcons = field.pk && field.fk;
+  const extraPadding = hasTwoIcons ? 10 : 0;
+  const offsetPadding = field.not_null ? 50 : 0;
+
+  return text.length * charWidth + basePadding + extraPadding + offsetPadding;
 }
 
 export function calculateMaxWidth(tableHeader: string, tableData: TableResponse): number {
   let maxWidth = 0;
 
-  const tableNameWidth = estimateTextWidth(tableHeader, false);
+  const tableNameWidth = estimateTextWidth(tableHeader);
   maxWidth = Math.max(maxWidth, tableNameWidth);
 
   console.log('Table name:', tableHeader);
   for (const field of tableData.fields ?? []) {
-    const fieldWidth = estimateTextWidth(`${field.name} ${field.type}`, field.not_null ?? false);
+    const fieldText = `${field.name} ${field.type}`;
+    const fieldWidth = estimateTextWidth(fieldText, field);
     maxWidth = Math.max(maxWidth, fieldWidth);
   }
   return maxWidth;

@@ -171,7 +171,6 @@ async function createBeautifulTableFigjam(
   rowNodeMap: Map<string, SceneNode>,
 ): Promise<GroupNode> {
   const headerTable = `${schemaData.name}.${tableData.name}`;
-  const headerDescription = tableData.note ?? '';
   tableColorMap.set(headerTable, colorHeader);
 
   const maxWidth = calculateMaxWidth(headerTable, tableData);
@@ -251,7 +250,7 @@ async function createHeader(
 
     header.appendChild(subtitle);
   }
-  
+
   return header;
 }
 
