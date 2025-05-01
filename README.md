@@ -2,7 +2,7 @@
 
 Easily create interactive **Entity Relationship Diagrams (ERDs)** in [FigJam](https://www.figma.com/figjam/) with this plugin. Just paste your database schema written in **MySQL**, **PostgreSQL**, or **DBML**, and the plugin will parse it into an editable diagram with tables and relationships.
 
-![Demo Screenshot](images\diagram_ecommerce.png)
+![Demo Screenshot](images/diagram_ecommerce.png)
 
 ---
 
