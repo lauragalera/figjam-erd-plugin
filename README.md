@@ -4,8 +4,6 @@ Easily create interactive **Entity Relationship Diagrams (ERDs)** in [FigJam](ht
 
 ![Demo Screenshot](images/diagram_ecommerce.png)
 
----
-
 ## ✨ Features
 
 - 📝 **Built-in Code Editor** with live preview and syntax highlighting
@@ -18,8 +16,6 @@ Easily create interactive **Entity Relationship Diagrams (ERDs)** in [FigJam](ht
   - Drag and rearrange tables
   - Adjust connectors freely
   - Editable text labels
-
----
 
 ## 🚀 Getting Started
 
