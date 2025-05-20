@@ -4,6 +4,8 @@ Easily create interactive **Entity Relationship Diagrams (ERDs)** in [FigJam](ht
 
 ![Demo Screenshot](images/diagram_ecommerce.png)
 
+Watch this video on [How to Use the Plugin](https://www.linkedin.com/posts/laura-galera-9a388016a_data-dataengineering-databases-activity-7323724148906573824-xEEV?utm_source=share&utm_medium=member_desktop&rcm=ACoAAChaDYsBmjhNzuQ1p6V1qPK2Lkn9pz2N5tw) for a quick guide.
+
 ## ✨ Features
 
 - 📝 **Built-in Code Editor** with live preview and syntax highlighting
